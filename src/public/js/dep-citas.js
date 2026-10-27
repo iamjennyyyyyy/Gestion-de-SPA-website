@@ -6,7 +6,7 @@ SCREENS.citas = async () => {
        let url = '/api/citas';
     const d = await api.get(url);
     if (!d.success) {
-      ct.innerHTML = showEmpty('fa-regular fa-calendar-xmark', 'Sin datos', 'No se pudieron cargar las citas.', 'Reintentar', 'navigate(\'citas\')');
+      ct.innerHTML = showEmpty('fa-solid fa-calendar-xmark', 'Sin datos', 'No se pudieron cargar las citas.', 'Reintentar', 'navigate(\'citas\')');
       return;
     }
              let citas = d.data || [];
@@ -39,10 +39,10 @@ SCREENS.citas = async () => {
               html += '<button onclick="cancelarCita(' + c.idcita + ')" class="px-2 py-1 text-xs font-semibold text-white bg-red-400 hover:bg-red-500 rounded-lg flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Cancelar</button>';
             }
             
-            html += '<button onclick="verCita(' + c.idcita + ')" class="p-1.5 text-[#6b7280] hover:text-menta hover:bg-menta-50 rounded-lg transition-all" title="Ver"><i class="fa-regular fa-eye"></i></button>';
+            html += '<button onclick="verCita(' + c.idcita + ')" class="p-1.5 text-[#6b7280] hover:text-menta hover:bg-menta-50 rounded-lg transition-all" title="Ver"><i class="fa-solid fa-eye"></i></button>';
             
             if (c.estado === 'pendiente') {
-              html += '<button onclick="editarCita(' + c.idcita + ')" class="p-1.5 text-[#6b7280] hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Editar"><i class="fa-regular fa-pen-to-square"></i></button>';
+              html += '<button onclick="editarCita(' + c.idcita + ')" class="p-1.5 text-[#6b7280] hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>';
             }
             
             html += '</div>';
@@ -51,10 +51,10 @@ SCREENS.citas = async () => {
         }
       ], citas));
     } else {
-      ct.querySelector('.fade-in').insertAdjacentHTML('beforeend', showEmpty('fa-regular fa-calendar-check', 'No hay citas ' + (citasFilterPeriodo === 'hoy' ? 'para hoy' : citasFilterPeriodo === 'pasadas' ? 'pasadas' : 'futuras'), 'Agenda la primera cita para comenzar.', 'Agendar Cita', 'citaModal()'));
+      ct.querySelector('.fade-in').insertAdjacentHTML('beforeend', showEmpty('fa-solid fa-calendar-check', 'No hay citas ' + (citasFilterPeriodo === 'hoy' ? 'para hoy' : citasFilterPeriodo === 'pasadas' ? 'pasadas' : 'futuras'), 'Agenda la primera cita para comenzar.', 'Agendar Cita', 'citaModal()'));
     }
   } catch (e) {
-    ct.innerHTML = showEmpty('fa-regular fa-circle-exclamation', 'Error', 'Ocurrió un error.', 'Reintentar', 'navigate(\'citas\')');
+    ct.innerHTML = showEmpty('fa-solid fa-circle-exclamation', 'Error', 'Ocurrió un error.', 'Reintentar', 'navigate(\'citas\')');
   }
 };
 async function verCita(id){
@@ -64,13 +64,13 @@ async function verCita(id){
     const c=d.data;
     
     
-    openModal('<div class="p-6" style="max-width: 520px"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]"><i class="fa-regular fa-circle-info text-menta mr-2"></i>Detalle de Cita</h3><span class="px-2.5 py-0.5 text-xs font-semibold rounded-full border '+sc(c.estado)+'">'+cap(c.estado)+'</span></div><div class="space-y-3 text-sm"><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Cliente</span><span class="font-medium text-[#2c3e50]">'+c.clientenombre+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Teléfono</span><span class="font-medium text-[#2c3e50]">'+c.telefonocliente+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Tratamiento</span><span class="font-medium text-[#2c3e50]">'+c.tratamientonombre+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Precio</span><span class="font-medium text-[#2c3e50]">'+$$(c.precio)+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Fecha</span><span class="font-medium text-[#2c3e50]">'+formatDate(c.fecha)+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Hora</span><span class="font-medium text-[#2c3e50]">'+formatTime(c.hora)+'</span></div>'+(c.empleadonombre?'<div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Empleado</span><span class="font-medium text-[#2c3e50]">'+c.empleadonombre+'</span></div>':'')+(c.observaciones?'<div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Observaciones</span><span class="font-medium text-[#2c3e50]">'+c.observaciones+'</span></div>':'')+'</div><div class="flex gap-2 mt-6 justify-end"><button onclick="closeModal()" class="px-5 py-2.5 bg-gray-100 text-[#6b7280] rounded-xl text-sm font-medium hover:bg-gray-200">Cerrar</button>'+(c.estado==='pendiente'?'<button onclick=\"closeModal();cancelarCita('+id+')\" class=\"px-5 py-2.5 bg-red-100 text-red-600 rounded-xl text-sm font-medium hover:bg-red-200\"><i class=\"fa-solid fa-xmark mr-1.5\"></i>Cancelar</button><button onclick=\"closeModal();realizarCita('+id+')\" class=\"px-5 py-2.5 bg-menta text-white rounded-xl text-sm font-medium shadow-sm hover:bg-menta-600\"><i class=\"fa-solid fa-check mr-1.5\"></i>Realizar</button>':'')+'</div></div>');
+    openModal('<div class="p-6" style="max-width: 520px"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]"><i class="fa-solid fa-circle-info text-menta mr-2"></i>Detalle de Cita</h3><span class="px-2.5 py-0.5 text-xs font-semibold rounded-full border '+sc(c.estado)+'">'+cap(c.estado)+'</span></div><div class="space-y-3 text-sm"><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Cliente</span><span class="font-medium text-[#2c3e50]">'+c.clientenombre+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Teléfono</span><span class="font-medium text-[#2c3e50]">'+c.telefonocliente+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Tratamiento</span><span class="font-medium text-[#2c3e50]">'+c.tratamientonombre+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Precio</span><span class="font-medium text-[#2c3e50]">'+$$(c.precio)+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Fecha</span><span class="font-medium text-[#2c3e50]">'+formatDate(c.fecha)+'</span></div><div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Hora</span><span class="font-medium text-[#2c3e50]">'+formatTime(c.hora)+'</span></div>'+(c.empleadonombre?'<div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Empleado</span><span class="font-medium text-[#2c3e50]">'+c.empleadonombre+'</span></div>':'')+(c.observaciones?'<div class="flex justify-between py-2 border-b border-[#e8ecf1]"><span class="text-[#6b7280]">Observaciones</span><span class="font-medium text-[#2c3e50]">'+c.observaciones+'</span></div>':'')+'</div><div class="flex gap-2 mt-6 justify-end"><button onclick="closeModal()" class="px-5 py-2.5 bg-gray-100 text-[#6b7280] rounded-xl text-sm font-medium hover:bg-gray-200">Cerrar</button>'+(c.estado==='pendiente'?'<button onclick=\"closeModal();cancelarCita('+id+')\" class=\"px-5 py-2.5 bg-red-100 text-red-600 rounded-xl text-sm font-medium hover:bg-red-200\"><i class=\"fa-solid fa-xmark mr-1.5\"></i>Cancelar</button><button onclick=\"closeModal();realizarCita('+id+')\" class=\"px-5 py-2.5 bg-menta text-white rounded-xl text-sm font-medium shadow-sm hover:bg-menta-600\"><i class=\"fa-solid fa-check mr-1.5\"></i>Realizar</button>':'')+'</div></div>');
   }catch(e){toast('Error al cargar detalle',false)}
 }
 async function cambioEstadoCita(id,estadoActual){
   const estados=['pendiente','realizada','cancelada'];let idx=estados.indexOf(estadoActual);if(idx<0)idx=0;
   const nuevos=estados.filter(e=>e!==estadoActual);
-  openModal('<div class="p-6" style="max-width: 380px"><h3 class="text-lg font-semibold text-[#2c3e50] mb-4"><i class="fa-regular fa-pen-to-square text-menta mr-2"></i>Cambiar Estado</h3><p class="text-sm text-[#6b7280] mb-4">Selecciona el nuevo estado para la cita:</p><div class="space-y-2">'+nuevos.map(s=>'<button onclick="aplicarCambioEstado('+id+',\''+s+'\')" class="w-full text-left px-4 py-3 rounded-xl border border-[#e8ecf1] hover:border-menta-200 hover:bg-menta-50 transition-all flex items-center gap-3"><div class="w-3 h-3 rounded-full" style="background:'+sb(s)+'"></div><span class="font-medium text-sm text-[#2c3e50]">'+cap(s)+'</span></button>').join('')+'</div><button onclick="closeModal()" class="mt-4 w-full px-4 py-2.5 bg-gray-100 text-[#6b7280] rounded-xl text-sm font-medium hover:bg-gray-200">Cancelar</button></div>');
+  openModal('<div class="p-6" style="max-width: 380px"><h3 class="text-lg font-semibold text-[#2c3e50] mb-4"><i class="fa-solid fa-pen-to-square text-menta mr-2"></i>Cambiar Estado</h3><p class="text-sm text-[#6b7280] mb-4">Selecciona el nuevo estado para la cita:</p><div class="space-y-2">'+nuevos.map(s=>'<button onclick="aplicarCambioEstado('+id+',\''+s+'\')" class="w-full text-left px-4 py-3 rounded-xl border border-[#e8ecf1] hover:border-menta-200 hover:bg-menta-50 transition-all flex items-center gap-3"><div class="w-3 h-3 rounded-full" style="background:'+sb(s)+'"></div><span class="font-medium text-sm text-[#2c3e50]">'+cap(s)+'</span></button>').join('')+'</div><button onclick="closeModal()" class="mt-4 w-full px-4 py-2.5 bg-gray-100 text-[#6b7280] rounded-xl text-sm font-medium hover:bg-gray-200">Cancelar</button></div>');
 }
 async function aplicarCambioEstado(id,estado){
   try{
@@ -158,7 +158,7 @@ async function citaModal(editData) {
     
     var body = '<div class="p-6" style="max-width:520px">' +
       '<h3 class="text-lg font-semibold text-[#2c3e50] mb-5">' +
-      '<i class="fa-regular fa-calendar-plus text-menta mr-2"></i>' + (editData ? 'Editar Cita' : 'Agendar Cita') + '</h3>';
+      '<i class="fa-solid fa-calendar-plus text-menta mr-2"></i>' + (editData ? 'Editar Cita' : 'Agendar Cita') + '</h3>';
     
     body += '<div class="space-y-3.5">';
     
@@ -287,7 +287,7 @@ async function guardarCita() {
     observaciones,
     precio: Number(precio) || 0
   };
-  if (estado) data.estado = estado;
+  // if (estado) data.estado = estado;
   
   try {
     const d = editId ? await api.put('/api/citas/' + editId, data) : await api.post('/api/citas', data);

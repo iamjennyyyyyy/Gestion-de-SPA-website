@@ -221,6 +221,13 @@ class CitaRepository {
   );
   return result.rows;
 }
+
+async moverATratamiento(idOrigen, idDestino) {
+    const r = await pool.query(
+        'UPDATE citas SET idtratamiento = $1 WHERE idtratamiento = $2 RETURNING *',
+        [idDestino, idOrigen]);
+    return r.rows;
+}
 }
 
 module.exports = new CitaRepository();

@@ -153,6 +153,17 @@ const tratamientoController = {
             res.status(400).json({ success: false, error: e.message });
         }
     },
+
+    async moverCitas(req, res) {
+    try {
+        const idOrigen = parseInt(req.params.idTratamiento);
+        const idDestino = parseInt(req.body.idtratamiento_destino);
+        const r = await tratamientoService.moverCitasATratamiento(idOrigen, idDestino);
+        res.json({ success: true, count: r.length, data: r });
+    } catch (e) {
+        res.status(400).json({ success: false, error: e.message });
+    }
+},
 };
 
 module.exports = tratamientoController;

@@ -17,7 +17,7 @@ const authRoutes = require('./routes/authRoutes');
 const reporteRoutes = require('./routes/reporteRoutes');
 
 // En app.js - cambiar a:
-const { verificarToken, esAdministrador } = require('./middlewares/authMiddleware');
+const { verificarToken, esAdministrador, soloAdminEscritura } = require('./middlewares/authMiddleware');
 
 require('./jobs/refreshMaterializedViews');
 
@@ -37,24 +37,21 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 
-app.use('/api/areas', verificarToken, areaRoutes);
-app.use('/api/categorias', verificarToken, categoriaRoutes);
+app.use('/api/areas',        verificarToken, soloAdminEscritura, areaRoutes);
+app.use('/api/categorias',   verificarToken, soloAdminEscritura, categoriaRoutes);
+app.use('/api/distritos',    verificarToken, soloAdminEscritura, distritoRoutes);
+app.use('/api/empleados',    verificarToken, soloAdminEscritura, empleadoRoutes);
+app.use('/api/materiales',   verificarToken, soloAdminEscritura, materialRoutes);
+app.use('/api/paquetes',     verificarToken, soloAdminEscritura, paqueteRoutes);
+app.use('/api/tratamientos', verificarToken, soloAdminEscritura, tratamientoRoutes);
 app.use('/api/clientes', verificarToken, clienteRoutes);
-app.use('/api/distritos', verificarToken, distritoRoutes);
-app.use('/api/empleados', verificarToken, empleadoRoutes);
-app.use('/api/materiales', verificarToken, materialRoutes);
-app.use('/api/paquetes', verificarToken, paqueteRoutes);
-app.use('/api/tratamientos', verificarToken, tratamientoRoutes);
 app.use('/api/paquetes-vendidos', verificarToken, paqueteVendidoRoutes);
 app.use('/api/citas', verificarToken, citaRoutes);
 app.use('/api/reportes', verificarToken, reporteRoutes);
 
 app.use((err, req, res, next) => {
     console.error('ERROR:', err);
-    res.status(500).json({
-        error: err.message,
-        stack: err.stack
-    });
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
 });
 
 const PORT = process.env.PORT || 3000;

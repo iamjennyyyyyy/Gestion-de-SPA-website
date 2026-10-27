@@ -6,6 +6,7 @@ const empleadoRepository = require('../repositories/empleadoRepository');
 const { MaterialTratamiento } = require('../models/Relaciones');
 const Tratamiento = require('../models/Tratamiento');
 const areaRepository = require('../repositories/areaRepository');
+const citaRepository = require('../repositories/citaRepository');
 
 const tratamientoService = {
 
@@ -139,6 +140,13 @@ const tratamientoService = {
 
         return { fijos, suplentes };
     },
+    async moverCitasATratamiento(idOrigen, idDestino) {
+       if (!idDestino || isNaN(idDestino)) throw new Error('El tratamiento destino es obligatorio');
+       if (idOrigen === idDestino) throw new Error('El destino debe ser distinto del origen');
+       if (!await tratamientoRepository.buscarPorId(idOrigen)) throw new Error('Tratamiento de origen no encontrado');
+       if (!await tratamientoRepository.buscarPorId(idDestino)) throw new Error('Tratamiento de destino no encontrado');
+       return await citaRepository.moverATratamiento(idOrigen, idDestino);
+},
 };
 
 module.exports = tratamientoService;

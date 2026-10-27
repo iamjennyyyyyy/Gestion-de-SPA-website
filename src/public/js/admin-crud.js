@@ -15,11 +15,11 @@ function crudScreen(opts){
     const ct=$('pageContent');ct.innerHTML=showLoading();
     try{
       const d=await api.get(endpoint);
-      if(!d.success){ct.innerHTML=showEmpty('fa-regular fa-database','Sin datos','No se pudieron cargar los datos.');return;}
+      if(!d.success){ct.innerHTML=showEmpty('fa-solid fa-database','Sin datos','No se pudieron cargar los datos.');return;}
       const data=d.data||[];
-      const cols=customCols||[{label:entity,field:titleField,render:r=>r[titleField]||'-'},{label:'Acciones',render:r=>'<div class="flex gap-1.5 justify-end"><button onclick="editCRUD(\''+page+'\','+r[Object.keys(r).find(k=>k.toLowerCase().includes('id'))]+')" class="p-1.5 text-[#6b7280] hover:text-menta hover:bg-menta-50 rounded-lg transition-all" title="Editar"><i class="fa-regular fa-pen-to-square"></i></button><button onclick="deleteCRUD(\''+endpoint+'\','+r[Object.keys(r).find(k=>k.toLowerCase().includes('id'))]+',\''+page+'\')" class="p-1.5 text-[#6b7280] hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Eliminar"><i class="fa-regular fa-trash-can"></i></button></div>'}];
+      const cols=customCols||[{label:entity,field:titleField,render:r=>r[titleField]||'-'},{label:'Acciones',render:r=>'<div class="flex gap-1.5 justify-end"><button onclick="editCRUD(\''+page+'\','+r[Object.keys(r).find(k=>k.toLowerCase().includes('id'))]+')" class="p-1.5 text-[#6b7280] hover:text-menta hover:bg-menta-50 rounded-lg transition-all" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button><button onclick="deleteCRUD(\''+endpoint+'\','+r[Object.keys(r).find(k=>k.toLowerCase().includes('id'))]+',\''+page+'\')" class="p-1.5 text-[#6b7280] hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button></div>'}];
       ct.innerHTML='<div class="fade-in"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]">'+entity+'</h3><div class="flex items-center gap-2"><span class="px-2.5 py-0.5 bg-menta-50 text-menta-700 text-xs font-semibold rounded-full">'+data.length+'</span><button onclick="window[\'openModalCRUD_'+page+'\']()" class="px-3 py-1.5 bg-menta text-white text-xs font-medium rounded-xl hover:bg-menta-600 shadow-sm flex items-center gap-1"><i class="fa-solid fa-plus"></i> Agregar</button></div></div><div class="bg-white rounded-2xl shadow-sm border border-[#e8ecf1] overflow-hidden">'+(customRender?customRender(data):renderTable(cols,data))+'</div></div>';
-    }catch(e){ct.innerHTML=showEmpty('fa-regular fa-circle-exclamation','Error','Ocurrió un error al cargar.','Reintentar','navigate(\''+page+'\')')}
+    }catch(e){ct.innerHTML=showEmpty('fa-solid fa-circle-exclamation','Error','Ocurrió un error al cargar.','Reintentar','navigate(\''+page+'\')')}
   };
   window['openModalCRUD_'+page]=()=>crudForm(page,endpoint,entity,fields,null,onCreated);
 }
@@ -48,7 +48,7 @@ window['editCRUD']=async(p,id)=>{
 
 async function crudForm(page,endpoint,entity,fields,editData,onCreated){
   editId=editData?editData[Object.keys(editData).find(k=>k.toLowerCase().includes('id'))]:null;
-  let body='<div class="p-6" style="max-width: 480px"><h3 class="text-lg font-semibold text-[#2c3e50] mb-5"><i class="fa-regular fa-'+(editData?'pen-to-square':'square-plus')+' text-menta mr-2"></i>'+(editData?'Editar ':'Nuevo ')+entity+'</h3><form id="crudForm" class="space-y-3.5" onsubmit="return false">';
+  let body='<div class="p-6" style="max-width: 480px"><h3 class="text-lg font-semibold text-[#2c3e50] mb-5"><i class="fa-solid fa-'+(editData?'pen-to-square':'square-plus')+' text-menta mr-2"></i>'+(editData?'Editar ':'Nuevo ')+entity+'</h3><form id="crudForm" class="space-y-3.5" onsubmit="return false">';
   fields.forEach(f=>{
     const name=f.field||f.name,label=f.label||f.name,type=f.type||'text';
     // Safely get edit value; handle boolean fields

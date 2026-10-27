@@ -5,9 +5,9 @@ SCREENS.tratamientos=async()=>{
   const ct=$('pageContent');ct.innerHTML=showLoading();
   try{
     const d=await api.get('/api/tratamientos');
-    if(!d.success){ct.innerHTML=showEmpty('fa-regular fa-spa','Sin datos','No hay tratamientos disponibles.');return;}
+    if(!d.success){ct.innerHTML=showEmpty('fa-solid fa-spa','Sin datos','No hay tratamientos disponibles.');return;}
     ct.innerHTML='<div class="fade-in"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]">Tratamientos</h3><span class="px-2.5 py-0.5 bg-menta-50 text-menta-700 text-xs font-semibold rounded-full">'+d.data.length+'</span></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">'+d.data.map(t=>'<div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5 hover:shadow-md transition-shadow"><div class="flex items-start gap-3"><div class="w-10 h-10 rounded-xl bg-lavender-100 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-spa text-spa"></i></div><div class="min-w-0"><h4 class="font-semibold text-[#2c3e50] truncate">'+t.nombre+'</h4><p class="text-xs text-[#6b7280] mt-0.5 line-clamp-2">'+(t.descripcion||'Sin descripción')+'</p></div></div><div class="flex items-center justify-between mt-4 pt-3 border-t border-[#e8ecf1]"><span class="text-lg font-bold text-menta">'+$$(t.precio)+'</span><div class="text-right"><span class="text-xs text-[#6b7280]">'+t.duracion+' min</span>'+(t.categorianombre?'<br><span class="text-xs text-menta font-medium">'+t.categorianombre+'</span>':'')+'</div></div></div>').join('')+'</div></div>';
-  }catch(e){ct.innerHTML=showEmpty('fa-regular fa-circle-exclamation','Error','Ocurrió un error al cargar tratamientos.','Reintentar','navigate(\'tratamientos\')')}
+  }catch(e){ct.innerHTML=showEmpty('fa-solid fa-circle-exclamation','Error','Ocurrió un error al cargar tratamientos.','Reintentar','navigate(\'tratamientos\')')}
 };
 
 SCREENS['paquetes-vendidos'] = async () => renderPaquetesVendidos();
@@ -40,10 +40,10 @@ SCREENS.paquetes=async()=>{
   const ct=$('pageContent');ct.innerHTML=showLoading();
   try{
     const d=await api.get('/api/paquetes');
-    if(!d.success){ct.innerHTML=showEmpty('fa-regular fa-box','Sin datos','No hay paquetes disponibles.');return;}
+    if(!d.success){ct.innerHTML=showEmpty('fa-solid fa-box','Sin datos','No hay paquetes disponibles.');return;}
     let content='<div class="fade-in"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]">Paquetes</h3><span class="px-2.5 py-0.5 bg-menta-50 text-menta-700 text-xs font-semibold rounded-full">'+d.data.length+'</span></div><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">'+d.data.map(p=>'<div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5 hover:shadow-md transition-shadow"><div class="flex items-start gap-3"><div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-gift text-amber-500"></i></div><div class="min-w-0"><h4 class="font-semibold text-[#2c3e50]">'+p.paquetenombre+'</h4></div></div><div class="flex items-center justify-between mt-4 pt-3 border-t border-[#e8ecf1]"><span class="text-lg font-bold text-menta">'+$$(p.precio)+'</span><div class="flex gap-2"><button onclick="venderPaquete('+p.idpaquete+',\''+p.paquetenombre.replace(/'/g,"\\'")+'\','+p.precio+')" class="px-3 py-1.5 bg-menta text-white text-xs font-medium rounded-xl hover:bg-menta-600 shadow-sm">Vender</button><button onclick="verPaqueteDetalle('+p.idpaquete+')" class="text-xs text-menta hover:text-menta-600 font-medium">Ver <i class="fa-solid fa-chevron-right ml-0.5 text-xs"></i></button></div></div></div>').join('')+'</div></div>';
     ct.innerHTML=content;
-  }catch(e){ct.innerHTML=showEmpty('fa-regular fa-circle-exclamation','Error','Ocurrió un error.','Reintentar','navigate(\'paquetes\')')}
+  }catch(e){ct.innerHTML=showEmpty('fa-solid fa-circle-exclamation','Error','Ocurrió un error.','Reintentar','navigate(\'paquetes\')')}
 };
 async function verPaqueteDetalle(id) {
   try {
@@ -159,10 +159,10 @@ async function venderPaquete(id, nombre, precio) {
   <option value="11:30">11:30</option>
   <option value="12:00">12:00</option>
   <option value="12:30">12:30</option>
-  <option value="01:00">13:00</option>
-  <option value="01:30">13:30</option>
-  <option value="02:00">14:00</option>
-  <option value="02:30">14:30</option>
+  <option value="13:00">13:00</option>
+  <option value="13:30">13:30</option>
+  <option value="14:00">14:00</option>
+  <option value="14:30">14:30</option>
  
 </select>
             </div>
@@ -284,7 +284,7 @@ async function renderPaquetesVendidos() {
   try {
     const d = await api.get('/api/paquetes-vendidos');
     if (!d.success) {
-      ct.innerHTML = showEmpty('fa-regular fa-receipt', 'Sin datos', 'No se pudieron cargar los paquetes vendidos.');
+      ct.innerHTML = showEmpty('fa-solid fa-receipt', 'Sin datos', 'No se pudieron cargar los paquetes vendidos.');
       return;
     }
     
@@ -358,14 +358,14 @@ async function renderPaquetesVendidos() {
                 </div>
               </div>
             `;
-          }).join('') : showEmpty('fa-regular fa-receipt', 'Sin paquetes vendidos', 'Aún no se han vendido paquetes.')}
+          }).join('') : showEmpty('fa-solid fa-receipt', 'Sin paquetes vendidos', 'Aún no se han vendido paquetes.')}
         </div>
       </div>
     `;
     
   } catch(e) {
     console.error(e);
-    ct.innerHTML = showEmpty('fa-regular fa-circle-exclamation', 'Error', 'Ocurrió un error al cargar los paquetes vendidos.', 'Reintentar', 'renderPaquetesVendidos()');
+    ct.innerHTML = showEmpty('fa-solid fa-circle-exclamation', 'Error', 'Ocurrió un error al cargar los paquetes vendidos.', 'Reintentar', 'renderPaquetesVendidos()');
   }
 }
 
@@ -675,7 +675,7 @@ async function _renderReporteScreen(ct){
     const topData=topRes.success?topRes.data||[]:[];
     const topColors=['bg-amber-100 text-amber-600','bg-gray-100 text-gray-500','bg-orange-50 text-orange-400'];
     const topHtml = topData.length ? topData.map((t, i) => '<div class="flex items-center gap-3 p-3 bg-[#f8fafc] rounded-xl border border-[#e8ecf1]"><div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ' + topColors[i] + '">' + (i + 1) + '</div><div class="flex-1 min-w-0"><p class="text-sm font-medium text-[#2c3e50] truncate">' + (t.tratamientonombre || t.nombre || '-') + '</p>' + '<p class="text-xs text-[#6b7280]">' + (t.solicitudes || 0) + ' citas</p></div></div>').join('') : '<p class="text-sm text-[#9ca3af] py-3 text-center">Sin datos disponibles</p>';    ct.innerHTML='<div class="fade-in"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]"><i class="fa-solid fa-chart-bar text-menta mr-2"></i>Reportes</h3></div><div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><div class="flex items-center gap-3 mb-2"><div class="w-9 h-9 rounded-xl bg-lavender-100 flex items-center justify-center"><i class="fa-solid fa-calendar-check text-spa text-sm"></i></div><p class="text-xs text-[#6b7280]">Citas Hoy</p></div><p class="text-3xl font-bold text-[#2c3e50]">'+hoyCitas.length+'</p><p class="text-xs text-[#6b7280] mt-1">'+pendientes.length+' pendientes</p></div><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><div class="flex items-center gap-3 mb-2"><div class="w-9 h-9 rounded-xl bg-menta-50 flex items-center justify-center"><i class="fa-solid fa-coins text-menta text-sm"></i></div><p class="text-xs text-[#6b7280]">Ventas Hoy</p></div><p class="text-3xl font-bold text-menta">'+$$(ventasHoy)+'</p><p class="text-xs text-[#6b7280] mt-1">'+realizadas.length+' realizadas</p></div><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><div class="flex items-center gap-3 mb-2"><div class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center"><i class="fa-solid fa-calendar-week text-amber-500 text-sm"></i></div><p class="text-xs text-[#6b7280]">Ventas Semana</p></div><p class="text-3xl font-bold text-[#2c3e50]">'+$$(ventasSem)+'</p><p class="text-xs text-[#6b7280] mt-1">'+semReal.length+' realizadas</p></div><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><div class="flex items-center gap-3 mb-2"><div class="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center"><i class="fa-solid fa-ban text-red-400 text-sm"></i></div><p class="text-xs text-[#6b7280]">Canceladas Hoy</p></div><p class="text-3xl font-bold text-red-400">'+canceladas.length+'</p><p class="text-xs text-[#6b7280] mt-1">citas canceladas</p></div></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-5"><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><h4 class="font-semibold text-[#2c3e50] mb-3 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-500 text-sm"></i>Top 3 Tratamientos</h4><div class="space-y-2">'+topHtml+'</div></div><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><h4 class="font-semibold text-[#2c3e50] mb-3 flex items-center gap-2"><i class="fa-solid fa-user-clock text-menta text-sm"></i>Historial de Cliente</h4><div class="space-y-2"><div class="relative"><input type="text" id="rptClienteInput" autocomplete="off" placeholder="Buscar cliente..." class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm" oninput="debounce(rptAutocomplete,300)()"><input type="hidden" id="rptClienteId"><div id="rptClienteAC" class="absolute z-50 w-full bg-white border border-[#e8ecf1] rounded-xl shadow-lg mt-1 max-h-40 overflow-y-auto hidden"></div></div><div class="flex gap-2"><input type="date" id="rptFechaDesde" class="flex-1 px-3 py-2 border border-[#d1d5db] rounded-xl text-sm"><input type="date" id="rptFechaHasta" class="flex-1 px-3 py-2 border border-[#d1d5db] rounded-xl text-sm"></div><div class="flex gap-2"><button onclick="rptEmpleadosPorCliente()" class="flex-1 px-3 py-2 bg-lavender-100 text-spa text-xs font-medium rounded-xl hover:bg-lavender-200">Ver empleados</button><button onclick="rptServiciosCliente()" class="flex-1 px-3 py-2 bg-menta-50 text-menta text-xs font-medium rounded-xl hover:bg-menta-100">Ver servicios por fechas</button></div><div id="rptClienteResultado" class="text-xs text-[#9ca3af] text-center py-2">Selecciona un cliente</div></div></div></div></div>';
-  }catch(e){ct.innerHTML=showEmpty('fa-regular fa-circle-exclamation','Error','Ocurrió un error al cargar reportes.','Reintentar','navigate(\'reportes\')')}
+  }catch(e){ct.innerHTML=showEmpty('fa-solid fa-circle-exclamation','Error','Ocurrió un error al cargar reportes.','Reintentar','navigate(\'reportes\')')}
 }
 SCREENS.reportes=async()=>_renderReporteScreen($('pageContent'));
 // Dependiente: Mapa y Contactos
@@ -692,5 +692,5 @@ SCREENS.mapa=async()=>{
       }
     }catch(e2){}
     ct.innerHTML='<div class="fade-in"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]"><i class="fa-solid fa-map-location-dot text-menta mr-2"></i>Mapa y Contactos</h3></div><div class="grid grid-cols-1 lg:grid-cols-5 gap-5"><div class="lg:col-span-3 bg-white rounded-2xl border border-[#e8ecf1] shadow-sm overflow-hidden"><div class="bg-gradient-to-br from-menta-50 to-lavender-100 h-48 lg:h-64 flex items-center justify-center relative"><div class="absolute inset-0 opacity-10"><svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full"><path fill="#2ecc71" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.8C87.4,-32.5,90,-16.2,88.6,-0.7C87.2,14.9,81.8,29.8,73.1,42.8C64.4,55.8,52.5,66.9,39,74.5C25.5,82.1,10.5,86.2,-3.8,83.5C-18.1,80.8,-31.6,71.3,-43.7,60.2C-55.9,49.1,-66.7,36.4,-73.1,21.5C-79.5,6.6,-81.5,-10.5,-76.1,-24.8C-70.8,-39.1,-58,-50.6,-44.1,-57.8C-30.2,-65.1,-15.1,-68.1,-0.2,-67.8C14.7,-67.5,30.6,-63.6,44.7,-76.4Z" transform="translate(100 100)" /></svg></div><div class="text-center relative z-10"><div class="w-16 h-16 mx-auto mb-3 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm"><i class="fa-solid fa-location-dot text-red-400 text-xl"></i></div><p class="font-semibold text-[#2c3e50]">Av. Principal 123, Santiago</p><p class="text-sm text-[#6b7280]">SPA Belleza & Relax</p></div></div>'+(distritosHtml?'<div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">'+distritosHtml+'</div>':'')+'</div><div class="lg:col-span-2 space-y-4"><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><h4 class="font-semibold text-[#2c3e50] mb-4 flex items-center gap-2"><i class="fa-solid fa-address-card text-menta"></i>Contacto</h4><div class="space-y-3 text-sm"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-menta-50 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-location-dot text-menta text-xs"></i></div><div><p class="font-medium text-[#2c3e50]">Dirección</p><p class="text-[#6b7280] text-xs">Av. Principal 123, Santiago, Chile</p></div></div><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-menta-50 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-phone text-menta text-xs"></i></div><div><p class="font-medium text-[#2c3e50]">Teléfono</p><p class="text-[#6b7280] text-xs">+56 2 1234 5678</p></div></div><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-menta-50 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-envelope text-menta text-xs"></i></div><div><p class="font-medium text-[#2c3e50]">Email</p><p class="text-[#6b7280] text-xs">spa@bellezarelax.com</p></div></div><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-menta-50 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-clock text-menta text-xs"></i></div><div><p class="font-medium text-[#2c3e50]">Horario</p><p class="text-[#6b7280] text-xs">Lun – Sáb: 9:00 – 18:00</p></div></div></div></div><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><h4 class="font-semibold text-[#2c3e50] mb-4 flex items-center gap-2"><i class="fa-solid fa-hashtag text-menta"></i>Redes Sociales</h4><div class="flex gap-3">'+redesHtml+'</div></div></div></div></div>';
-  }catch(e){ct.innerHTML=showEmpty('fa-regular fa-circle-exclamation','Error','Ocurrió un error.','Reintentar','navigate(\'mapa\')')}
+  }catch(e){ct.innerHTML=showEmpty('fa-solid fa-circle-exclamation','Error','Ocurrió un error.','Reintentar','navigate(\'mapa\')')}
 };

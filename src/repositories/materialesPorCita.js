@@ -37,19 +37,19 @@ class materialesPorCitaRepository{
         return result.rows[0];
     }
 
-    async desasignarMaterialDeCita(idata, idMaterial){
+    async desasignarMaterialDeCita(idMaterial, idCita){
         const result = await pool.query(
             `DELETE FROM materialesporcita
-            WHERE idmaterial = $1 AND idcita = $2 RETURNING *`, [idMaterial, idCita]
+             WHERE idmaterial = $1 AND idcita = $2 RETURNING *`, [idMaterial, idCita]
         );
         return result.rows[0];
     }
 
-    async actualizarCantidadMaterial(idCita, idMaterial, cantidad){
+    async actualizarCantidadMaterial(idMaterial, idCita, cantidad){
         const result = await pool.query(
             `UPDATE materialesporcita
-            SET cantidadmaterialutilizado = $1
-            WHERE idmaterial = $2 AND idcita = $3 RETURNING *`, [cantidad, idMaterial, idCita]
+             SET cantidadmaterialutilizado = $1
+             WHERE idmaterial = $2 AND idcita = $3 RETURNING *`, [cantidad, idMaterial, idCita]
         );
         return result.rows[0];
     }

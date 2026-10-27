@@ -163,8 +163,8 @@ class EmpleadoRepository{
     // NUEVO MÉTODO: Eliminar empleado de todos los tratamientos fijos
     async eliminarDeTratamientosFijos(idEmpleado) {
         const result = await pool.query(
-            `DELETE FROM empleadofijo WHERE idempleado = $1 RETURNING *`,
-            [idEmpleado]
+            `DELETE FROM empleadosfijosportratamiento WHERE idempleadofijo = $1 RETURNING *`,
+           [idEmpleado]
         );
         return result.rows;
     }

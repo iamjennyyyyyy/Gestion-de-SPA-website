@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const citaController = require('../controllers/citaController');
 
+
 router.get('/', citaController.listarTodos);
 router.get('/cliente/:idCliente', citaController.obtenerPorCliente);
 router.get('/empleado/:idEmpleado', citaController.obtenerPorEmpleado);
@@ -20,5 +21,6 @@ router.post('/:idCita/materiales/:idMaterial', citaController.asignarMaterialACi
 router.delete('/:idCita/materiales/:idMaterial', citaController.desasignarMaterialACita);
 router.put('/:idCita', citaController.modificar);
 router.delete('/:idCita', citaController.eliminar);
+
 
 module.exports = router;

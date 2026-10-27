@@ -35,6 +35,12 @@ const esDependiente = (req, res, next) => {
         return res.status(403).json({ success: false, error: 'Acceso denegado. Se requiere rol de dependiente' });
     }
     next();
+    
+
 };
 
-module.exports = { verificarToken, esAdministrador, esDependiente };
+const soloAdminEscritura = (req, res, next) =>
+    req.method === 'GET' ? next() : esAdministrador(req, res, next);
+
+
+module.exports = { verificarToken, esAdministrador, esDependiente, soloAdminEscritura };
