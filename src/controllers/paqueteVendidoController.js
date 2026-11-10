@@ -1,4 +1,4 @@
-const paqueteVendidoService = require('../services/paqueteVendidoService');
+const paqueteVendidoService = require("../services/paqueteVendidoService");
 
 const paqueteVendidoController = {
   async listarTodos(req, res) {
@@ -13,7 +13,8 @@ const paqueteVendidoController = {
   async obtenerPorId(req, res) {
     try {
       const idPaquete = parseInt(req.params.idPaquete);
-      const paquete = await paqueteVendidoService.obtenerPaqueteVPorId(idPaquete);
+      const paquete =
+        await paqueteVendidoService.obtenerPaqueteVPorId(idPaquete);
       res.json({ success: true, data: paquete });
     } catch (error) {
       res.status(404).json({ success: false, error: error.message });
@@ -23,7 +24,11 @@ const paqueteVendidoController = {
   async buscarPorIntervaloPrecio(req, res) {
     try {
       const { precioMin, precioMax } = req.query;
-      const paquetes = await paqueteVendidoService.obtenerPaquetesVPorIntervaloPrecio(parseFloat(precioMin), parseFloat(precioMax));
+      const paquetes =
+        await paqueteVendidoService.obtenerPaquetesVPorIntervaloPrecio(
+          parseFloat(precioMin),
+          parseFloat(precioMax),
+        );
       res.json({ success: true, count: paquetes.length, data: paquetes });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -33,7 +38,10 @@ const paqueteVendidoController = {
   async buscarPorDuracionTotal(req, res) {
     try {
       const { duracion } = req.query;
-      const paquetes = await paqueteVendidoService.obtenerPaquetesVPorDuracionTotal(parseInt(duracion));
+      const paquetes =
+        await paqueteVendidoService.obtenerPaquetesVPorDuracionTotal(
+          parseInt(duracion),
+        );
       res.json({ success: true, count: paquetes.length, data: paquetes });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -43,7 +51,8 @@ const paqueteVendidoController = {
   async buscarPorFechaInicio(req, res) {
     try {
       const { fechaInicio } = req.query;
-      const paquetes = await paqueteVendidoService.obtenerPaquetesVPorFechaInicio(fechaInicio);
+      const paquetes =
+        await paqueteVendidoService.obtenerPaquetesVPorFechaInicio(fechaInicio);
       res.json({ success: true, count: paquetes.length, data: paquetes });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -53,7 +62,8 @@ const paqueteVendidoController = {
   async buscarPorFechaCompra(req, res) {
     try {
       const { fechaCompra } = req.query;
-      const paquetes = await paqueteVendidoService.obtenerPaquetesVPorFechaCompra(fechaCompra);
+      const paquetes =
+        await paqueteVendidoService.obtenerPaquetesVPorFechaCompra(fechaCompra);
       res.json({ success: true, count: paquetes.length, data: paquetes });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -63,7 +73,8 @@ const paqueteVendidoController = {
   async buscarPorFechaFin(req, res) {
     try {
       const { fechaFin } = req.query;
-      const paquetes = await paqueteVendidoService.obtenerPaquetesVPorFechaFin(fechaFin);
+      const paquetes =
+        await paqueteVendidoService.obtenerPaquetesVPorFechaFin(fechaFin);
       res.json({ success: true, count: paquetes.length, data: paquetes });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -73,7 +84,11 @@ const paqueteVendidoController = {
   async buscarPorIntervaloFechasInicio(req, res) {
     try {
       const { fecha1, fecha2 } = req.query;
-      const paquetes = await paqueteVendidoService.obtenerPaquetesVPorIntervaloFechasInicio(fecha1, fecha2);
+      const paquetes =
+        await paqueteVendidoService.obtenerPaquetesVPorIntervaloFechasInicio(
+          fecha1,
+          fecha2,
+        );
       res.json({ success: true, count: paquetes.length, data: paquetes });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -83,7 +98,11 @@ const paqueteVendidoController = {
   async buscarPorIntervaloFechasFin(req, res) {
     try {
       const { fecha1, fecha2 } = req.query;
-      const paquetes = await paqueteVendidoService.obtenerPaquetesVPorIntervaloFechasFin(fecha1, fecha2);
+      const paquetes =
+        await paqueteVendidoService.obtenerPaquetesVPorIntervaloFechasFin(
+          fecha1,
+          fecha2,
+        );
       res.json({ success: true, count: paquetes.length, data: paquetes });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -93,7 +112,11 @@ const paqueteVendidoController = {
   async buscarPorIntervaloFechasCompra(req, res) {
     try {
       const { fecha1, fecha2 } = req.query;
-      const paquetes = await paqueteVendidoService.obtenerPaquetesVPorIntervaloFechasCompra(fecha1, fecha2);
+      const paquetes =
+        await paqueteVendidoService.obtenerPaquetesVPorIntervaloFechasCompra(
+          fecha1,
+          fecha2,
+        );
       res.json({ success: true, count: paquetes.length, data: paquetes });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -112,7 +135,10 @@ const paqueteVendidoController = {
   async actualizar(req, res) {
     try {
       const idPaquete = parseInt(req.params.idPaquete);
-      const paquete = await paqueteVendidoService.actualizarPaqueteV(idPaquete, req.body);
+      const paquete = await paqueteVendidoService.actualizarPaqueteV(
+        idPaquete,
+        req.body,
+      );
       res.json({ success: true, data: paquete });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
@@ -121,12 +147,14 @@ const paqueteVendidoController = {
 
   async eliminar(req, res) {
     try {
-      await paqueteVendidoService.eliminarPaqueteV(parseInt(req.params.idPaquete));
-      res.json({ success: true, message: 'Paquete vendido eliminado' });
+      await paqueteVendidoService.eliminarPaqueteV(
+        parseInt(req.params.idPaquete),
+      );
+      res.json({ success: true, message: "Paquete vendido eliminado" });
     } catch (error) {
       res.status(404).json({ success: false, error: error.message });
     }
-  }
+  },
 };
 
 module.exports = paqueteVendidoController;
