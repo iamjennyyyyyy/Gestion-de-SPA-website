@@ -52,29 +52,7 @@ SCREENS.tratamientos = async () => {
 
 SCREENS["paquetes-vendidos"] = async () => renderPaquetesVendidos();
 SCREENS["admin-paquetes-vendidos"] = async () => renderPaquetesVendidos();
-function actualizarPrecioMostrado() {
-  const sel = document.getElementById("citaTratamiento");
-  if (!sel) {
-    console.log("No se encontró el select citaTratamiento");
-    return;
-  }
 
-  const selectedOption = sel.options[sel.selectedIndex];
-  if (!selectedOption) {
-    console.log("No hay opción seleccionada");
-    return;
-  }
-
-  const precio = selectedOption.getAttribute("data-precio");
-  console.log("Precio obtenido:", precio);
-
-  const precioSpan = document.getElementById("precioMostrado");
-  if (precioSpan && precio) {
-    precioSpan.textContent = $$(Number(precio));
-  } else if (precioSpan) {
-    precioSpan.textContent = "$0.00";
-  }
-}
 // Dependiente: Paquetes (read-only w/ detail)
 SCREENS.paquetes = async () => {
   const ct = $("pageContent");
@@ -246,22 +224,10 @@ async function venderPaquete(id, nombre, precio) {
                      data-trat="${trat.idtratamiento}" data-index="${i}" value="${fechaMin}">
             </div>
             <div>
-             <select class="citaHora w-full px-3 py-2 border border-[#d1d5db] rounded-lg text-sm" 
-        data-trat="${trat.idtratamiento}" data-index="${i}">
-  <option value="09:00">09:00</option>
-  <option value="09:30">09:30</option>
-  <option value="10:00" selected>10:00</option>
-  <option value="10:30">10:30</option>
-  <option value="11:00">11:00</option>
-  <option value="11:30">11:30</option>
-  <option value="12:00">12:00</option>
-  <option value="12:30">12:30</option>
-  <option value="13:00">13:00</option>
-  <option value="13:30">13:30</option>
-  <option value="14:00">14:00</option>
-  <option value="14:30">14:30</option>
- 
-</select>
+             <div>
+  <label class="block text-xs font-semibold text-[#6b7280] mb-1">Hora *</label>
+  <select class="citaHora w-full px-3 py-2 border border-[#d1d5db] rounded-lg text-sm" data-trat="${trat.idtratamiento}" data-index="${i}">${horasOptions('10:00')}</select>
+</div>
             </div>
             <div>
               <label class="block text-xs font-semibold text-[#6b7280] mb-1">Empleado *</label>
@@ -408,48 +374,7 @@ function vtaSelCliente(id, nombre) {
   $("vtaClienteInput").value = nombre;
   $("vtaClienteAutocomplete").classList.add("hidden");
 }
-async function crearClienteRapido(origen) {
-  openSubModal(
-    '<div class="p-6" style="max-width:420px"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]"><i class="fa-solid fa-user-plus text-menta mr-2"></i>Nuevo Cliente</h3><button onclick="closeSubModal()" class="text-[#9ca3af] hover:text-[#6b7280] text-xl"><i class="fa-solid fa-xmark"></i></button></div><div class="space-y-3.5"><div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Nombre *</label><input type="text" id="rapidClienteNombre" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div><div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">CI *</label><input type="text" id="rapidClienteCi" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div><div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Teléfono</label><input type="text" id="rapidClienteTelefono" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div><div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Email</label><input type="email" id="rapidClienteEmail" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div></div><div class="flex gap-2 mt-6"><button onclick="closeSubModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-[#6b7280] rounded-xl text-sm font-medium hover:bg-gray-200">Cancelar</button><button onclick="guardarClienteRapido(\'' +
-      origen +
-      '\')" class="flex-1 px-4 py-2.5 bg-menta text-white rounded-xl text-sm font-medium shadow-sm">Crear Cliente</button></div></div>',
-  );
-}
-async function guardarClienteRapido(origen) {
-  const nombre = $("rapidClienteNombre")?.value?.trim(),
-    ci = $("rapidClienteCi")?.value?.trim(),
-    telefono = $("rapidClienteTelefono")?.value?.trim(),
-    email = $("rapidClienteEmail")?.value?.trim();
-  if (!nombre) return toast("El nombre es requerido", false);
-  if (!ci) return toast("La CI es requerida", false);
-  try {
-    const d = await api.post("/api/clientes", {
-      nombre,
-      ci,
-      telefono: telefono || null,
-      email: email || null,
-    });
-    if (!d.success) {
-      toast(d.error || "Error al crear cliente", false);
-      return;
-    }
-    toast("Cliente creado");
-    closeSubModal();
-    if (origen === "cita") {
-      $("citaClienteId").value = d.data.idcliente;
-      $("citaClienteInput").value = d.data.nombre;
-      const ac = $("clienteAutocomplete");
-      if (ac) ac.classList.add("hidden");
-    } else if (origen === "vta") {
-      $("vtaClienteId").value = d.data.idcliente;
-      $("vtaClienteInput").value = d.data.nombre;
-      const ac = $("vtaClienteAutocomplete");
-      if (ac) ac.classList.add("hidden");
-    }
-  } catch (e) {
-    toast(e.message || "Error de conexión", false);
-  }
-}
+
 
 // ============================================================
 // PAQUETES VENDIDOS - Lista general
@@ -597,7 +522,7 @@ async function loadPaqVendidoDetalle(id) {
     let citasHtml =
       '<p class="text-xs text-[#9ca3af] py-2">Cargando citas...</p>';
     try {
-      const cRes = await api.get("/api/citas/paquete/" + id);
+      const cRes = await api.get('/api/citas/paquete-vendido/' + id);
       const citas = cRes.success ? cRes.data || [] : [];
 
       // Ordenar citas por fecha (más cercana primero)
@@ -694,6 +619,384 @@ function togglePaqVendidoPanel(id) {
   if (chev) chev.classList.add("rotate-180");
   loadPaqVendidoDetalle(id);
 }
+
+
+function cancelarCita(id) {
+  openConfirm(
+    "Cancelar Cita",
+    "¿Confirmas la cancelación de esta cita? Solo podrás reactivarla editándola.",
+    async function () {
+      try {
+        const d = await api.put("/api/citas/" + id, { estado: "cancelada" });
+        if (!d.success) return toast(d.error || "Error al cancelar", false);
+        toast("Cita cancelada");
+        SCREENS.citas();
+      } catch (e) {
+        toast(e.message || "Error de conexión", false);
+      }
+    },
+    true,
+  );
+}
+
+
+let _realizarMateriales = []; // working list of materials for this realization
+
+async function realizarCita(idCita) {
+  try {
+    // Load cita details
+    const citaRes = await api.get("/api/citas/" + idCita);
+    if (!citaRes.success) {
+      toast("Error al cargar la cita", false);
+      return;
+    }
+    const cita = citaRes.data;
+
+    // Get treatment materials from the database using the correct endpoint
+    const tratMatRes = await api.get(
+      "/api/tratamientos/" + cita.idtratamiento + "/materiales",
+    );
+
+    // Get all available materials (for adding new ones)
+    const allMatRes = await api.get("/api/materiales");
+
+    // Build working materials list - set cantidad to 0 initially
+    _realizarMateriales = [];
+    if (tratMatRes.success && tratMatRes.data && tratMatRes.data.length) {
+      tratMatRes.data.forEach(function (m) {
+        _realizarMateriales.push({
+          idmaterial: m.idmaterial,
+          // ✅ CORREGIDO: usar 'nombrematerial' en lugar de 'nombre'
+          nombre: m.nombrematerial || m.nombre || "Material",
+          cantidad: 0,
+          cantidadPredeterminada: m.cantidad || 0,
+          esPredeterminado: true,
+        });
+      });
+    } else {
+      toast("Este tratamiento no tiene materiales asignados", false);
+    }
+
+    const todosLosMat =
+      allMatRes.success && allMatRes.data ? allMatRes.data : [];
+
+    _renderRealizarModal(idCita, cita, todosLosMat);
+  } catch (e) {
+    console.error("Error al cargar materiales:", e);
+    toast(e.message || "Error al cargar materiales", false);
+  }
+}
+
+function _renderRealizarModal(idCita, cita, todosLosMat) {
+  const matUsados = new Set(_realizarMateriales.map((m) => m.idmaterial));
+  const matDisponibles = todosLosMat.filter(
+    (m) => !matUsados.has(m.idmaterial),
+  );
+
+  const matListHtml = _realizarMateriales.length
+    ? _realizarMateriales
+        .map(function (m, i) {
+          // Show default quantity in a small badge
+          const defaultBadge = m.cantidadPredeterminada
+            ? `<span class="text-xs text-gray-400 ml-1">(default: ${m.cantidadPredeterminada})</span>`
+            : "";
+
+          return (
+            '<div class="flex items-center gap-3 p-3 bg-[#f8fafc] rounded-xl border border-[#e8ecf1] mb-2">' +
+            '<div class="flex-1 min-w-0">' +
+            '<p class="text-sm font-medium text-[#2c3e50] truncate">' +
+            m.nombre +
+            defaultBadge +
+            "</p>" +
+            (m.esPredeterminado
+              ? '<span class="text-xs text-menta font-medium">Material del tratamiento</span>'
+              : '<span class="text-xs text-[#9ca3af]">Agregado</span>') +
+            "</div>" +
+            '<div class="flex items-center gap-2 flex-shrink-0">' +
+            '<label class="text-xs text-[#6b7280]">Cant.:</label>' +
+            '<input type="number" min="0" step="0.01" value="' +
+            m.cantidad +
+            '" class="w-20 px-2 py-1.5 border border-[#d1d5db] rounded-lg text-sm text-center" onchange="window._realizarCantidad(' +
+            i +
+            ',this.value)">' +
+            '<button onclick="window._realizarQuitarMat(' +
+            i +
+            ')" class="p-1.5 text-[#d1d5db] hover:text-red-400 transition-colors" title="Quitar"><i class="fa-solid fa-xmark"></i></button>' +
+            "</div></div>"
+          );
+        })
+        .join("")
+    : '<p class="text-sm text-[#9ca3af] py-2 text-center">No hay materiales asignados a este tratamiento</p>';
+
+  const addSelectHtml = matDisponibles.length
+    ? '<select id="realizarAddSelect" class="flex-1 px-3 py-2 border border-[#d1d5db] rounded-xl text-sm">' +
+      '<option value="">Seleccionar material a agregar...</option>' +
+      matDisponibles
+        .map(
+          (m) =>
+            '<option value="' + m.idmaterial + '">' + m.nombre + "</option>",
+        )
+        .join("") +
+      "</select>" +
+      '<button onclick="window._realizarAgregarMat(' +
+      idCita +
+      ')" class="px-3 py-2 bg-menta text-white rounded-xl text-sm font-medium hover:bg-menta-600 flex-shrink-0"><i class="fa-solid fa-plus mr-1"></i>Agregar</button>'
+    : '<p class="text-xs text-[#9ca3af]">No hay más materiales disponibles</p>';
+
+  const html =
+    '<div class="p-6" style="max-width:600px">' +
+    '<div class="flex items-center justify-between mb-5">' +
+    '<div><h3 class="text-lg font-semibold text-[#2c3e50]"><i class="fa-solid fa-check-circle text-menta mr-2"></i>Realizar Cita</h3>' +
+    '<p class="text-xs text-[#6b7280] mt-1">' +
+    (cita.clientenombre || "") +
+    " — " +
+    (cita.tratamientonombre || "") +
+    "</p></div>" +
+    '<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full border bg-amber-100 text-amber-700 border-amber-200">Pendiente</span>' +
+    "</div>" +
+    '<div class="mb-4">' +
+    '<h4 class="text-sm font-semibold text-[#2c3e50] mb-2"><i class="fa-solid fa-box-open text-menta mr-1.5"></i>Materiales utilizados</h4>' +
+    '<div class="text-xs text-[#6b7280] mb-2">Ingresa las cantidades utilizadas para cada material:</div>' +
+    matListHtml +
+    "</div>" +
+    '<div class="border-t border-[#e8ecf1] pt-4 mb-4">' +
+    '<h4 class="text-sm font-semibold text-[#2c3e50] mb-2"><i class="fa-solid fa-plus text-mentaverde-500 mr-1.5"></i>Agregar material extra</h4>' +
+    '<div class="flex gap-2 items-center">' +
+    addSelectHtml +
+    "</div>" +
+    "</div>" +
+    '<div class="flex gap-2 mt-6">' +
+    '<button onclick="closeModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-[#6b7280] rounded-xl text-sm font-medium hover:bg-gray-200">Cancelar</button>' +
+    '<button onclick="window._confirmarRealizarCita(' +
+    idCita +
+    ')" class="flex-1 px-4 py-2.5 bg-menta text-white rounded-xl text-sm font-medium shadow-sm hover:bg-menta-600 flex items-center justify-center gap-2"><i class="fa-solid fa-check"></i>Confirmar Realizada</button>' +
+    "</div></div>";
+
+  openModal(html);
+
+  // Store data for later use
+  window._todosLosMat = todosLosMat;
+  window._realizarCitaId = idCita;
+  window._realizarCitaData = cita;
+}
+
+// Update quantity for a material in the working list
+window._realizarCantidad = function (idx, val) {
+  if (_realizarMateriales[idx])
+    _realizarMateriales[idx].cantidad = parseFloat(val) || 0;
+};
+
+// Remove a material from working list and re-render
+window._realizarQuitarMat = function (idx) {
+  _realizarMateriales.splice(idx, 1);
+  _renderRealizarModal(
+    window._realizarCitaId,
+    window._realizarCitaData,
+    window._todosLosMat,
+  );
+};
+
+// Add a material from the dropdown
+window._realizarAgregarMat = function (idCita) {
+  const sel = document.getElementById("realizarAddSelect");
+  if (!sel || !sel.value) {
+    toast("Selecciona un material", false);
+    return;
+  }
+  const idm = parseInt(sel.value);
+  const mat = window._todosLosMat.find(function (m) {
+    return m.idmaterial === idm;
+  });
+  if (!mat) return;
+
+  _realizarMateriales.push({
+    idmaterial: mat.idmaterial,
+    nombre: mat.nombre,
+    cantidad: 0, // Start with 0
+    cantidadPredeterminada: 0,
+    esPredeterminado: false,
+  });
+  _renderRealizarModal(
+    window._realizarCitaId,
+    window._realizarCitaData,
+    window._todosLosMat,
+  );
+};
+
+// Confirm: assign materials to cita and mark as realizada
+// Confirm: assign materials to cita and mark as realizada
+window._confirmarRealizarCita = async function (idCita) {
+  console.log("=== INICIANDO CONFIRMACIÓN ===");
+  console.log("ID Cita:", idCita);
+
+  const citaId = Number(idCita);
+
+  const hasMaterialsWithQuantity = _realizarMateriales.some(
+    (m) => m.cantidad > 0,
+  );
+
+  if (!hasMaterialsWithQuantity) {
+    const userConfirmed = confirm(
+      "⚠️ No has registrado ningún material.\n¿Deseas continuar?",
+    );
+    if (!userConfirmed) return;
+  }
+
+  try {
+    const btn = document.querySelector(
+      'button[onclick*="_confirmarRealizarCita"]',
+    );
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Guardando...';
+    }
+
+    // PASO 1: Marcar cita como realizada
+    console.log("Paso 1: Actualizando estado de la cita...");
+    const updateRes = await api.put(`/api/citas/${citaId}`, {
+      estado: "realizada",
+    });
+
+    if (!updateRes.success) {
+      toast(updateRes.error || "Error al actualizar cita", false);
+      if (btn) btn.disabled = false;
+      return;
+    }
+    console.log("✅ Cita actualizada a realizada");
+
+    // Esperar un momento
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    // PASO 2: Insertar materiales con el campo correcto: 'cantidadutilizada'
+    let assignedCount = 0;
+    for (const m of _realizarMateriales) {
+      if (m.cantidad > 0) {
+        try {
+          console.log(
+            `Registrando material: ${m.nombre}, cantidad: ${m.cantidad}`,
+          );
+
+          // ✅ CAMBIO IMPORTANTE: usar 'cantidadutilizada' en lugar de 'cantidad'
+          const matRes = await api.post(
+            `/api/citas/${citaId}/materiales/${m.idmaterial}`,
+            {
+              cantidadutilizada: m.cantidad,
+            },
+          );
+
+          if (matRes.success) {
+            assignedCount++;
+            console.log(`✅ ${m.nombre} registrado`);
+          } else {
+            console.error(`Error con ${m.nombre}:`, matRes.error);
+            toast(`Error: ${matRes.error}`, false);
+          }
+        } catch (e) {
+          console.error(`Excepción con ${m.nombre}:`, e);
+          toast(`Error al registrar ${m.nombre}: ${e.message}`, false);
+        }
+      }
+    }
+
+    toast(`✅ Cita realizada. ${assignedCount} material(es) registrado(s).`);
+    closeModal();
+    SCREENS.citas();
+  } catch (e) {
+    console.error("Error general:", e);
+    toast(e.message || "Error de conexión", false);
+    const btn = document.querySelector(
+      'button[onclick*="_confirmarRealizarCita"]',
+    );
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i>Confirmar Realizada';
+    }
+  }
+};
+SCREENS.inicio = async () => {
+  const ct = $("pageContent");
+  ct.innerHTML = showLoading();
+  try {
+    const d = await api.get("/api/citas");
+    if (!d.success) {
+      ct.innerHTML = showEmpty(
+        "fa-solid fa-calendar-xmark",
+        "Sin datos",
+        "No se pudieron cargar las citas.",
+      );
+      return;
+    }
+    const hoy = dayjs().format("YYYY-MM-DD"),
+      hoyCitas = d.data.filter(
+        (c) => dayjs(c.fecha).format("YYYY-MM-DD") === hoy,
+      ),
+      pendientes = hoyCitas.filter((c) => c.estado === "pendiente"),
+      realizadasHoy = hoyCitas.filter((c) => c.estado === "realizada");
+    const ventasHoy = realizadasHoy.reduce(
+      (s, c) => s + Number(c.precio || c.costo || 0),
+      0,
+    );
+    const frases = [
+      '"El cuidado personal es la forma más profunda de amor propio." —',
+      '"Donde la calma y la belleza se encuentran." —',
+      '"Cada día es una oportunidad para renovarte." —',
+      '"Tu bienestar es nuestra inspiración." —',
+    ];
+    const frase = frases[dayjs().day() % frases.length];
+    ct.innerHTML =
+      '<div class="fade-in"><div class="bg-gradient-to-br from-menta via-menta-600 to-menta-700 rounded-2xl p-6 md:p-8 mb-6 relative overflow-hidden shadow-md"><div class="absolute inset-0 pointer-events-none"><div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div><div class="absolute -bottom-8 -left-8 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div><div class="absolute top-1/2 left-1/4 w-32 h-32 bg-spa-300/10 rounded-full blur-xl"></div></div><div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4"><div><div class="flex items-center gap-3 mb-2"><div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center"><i class="fa-solid fa-spa text-white text-lg"></i></div><h2 class="text-white font-semibold text-lg">Bienvenido/a, ' +
+      (user?.username || "Usuario") +
+      '</h2></div><p class="text-white/80 text-sm">Hoy es ' +
+      today() +
+      '</p></div><div class="flex gap-3"><div class="bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 text-center"><p class="text-xs text-white/70">Citas Hoy</p><p class="text-xl font-bold text-white">' +
+      hoyCitas.length +
+      '</p></div><div class="bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 text-center"><p class="text-xs text-white/70">Ventas Hoy</p><p class="text-xl font-bold text-white">' +
+      $$(ventasHoy) +
+      '</p></div></div></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"><div class="bg-white rounded-2xl p-5 border border-[#e8ecf1] shadow-sm card-hover"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-menta-50 flex items-center justify-center"><i class="fa-solid fa-calendar-day text-menta"></i></div><div><p class="text-xs text-[#6b7280]">Citas Hoy</p><p class="text-2xl font-bold text-[#2c3e50]">' +
+      hoyCitas.length +
+      '</p></div></div></div><div class="bg-white rounded-2xl p-5 border border-[#e8ecf1] shadow-sm card-hover"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center"><i class="fa-solid fa-hourglass-half text-amber-500"></i></div><div><p class="text-xs text-[#6b7280]">Pendientes</p><p class="text-2xl font-bold text-[#2c3e50]">' +
+      pendientes.length +
+      '</p></div></div></div><div class="bg-white rounded-2xl p-5 border border-[#e8ecf1] shadow-sm card-hover"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-lavender-100 flex items-center justify-center"><i class="fa-solid fa-spa text-spa"></i></div><div><p class="text-xs text-[#6b7280]">Hoy</p><p class="text-lg font-semibold text-[#2c3e50]">' +
+      today() +
+      '</p></div></div></div></div><div class="grid grid-cols-1 lg:grid-cols-3 gap-5"><div class="lg:col-span-2 bg-white rounded-2xl border border-[#e8ecf1] shadow-sm overflow-hidden"><div class="px-5 py-4 border-b border-[#e8ecf1] flex items-center justify-between"><h3 class="font-semibold text-[#2c3e50]"><i class="fa-solid fa-clock text-menta mr-2"></i>Citas de Hoy</h3><span class="px-2.5 py-0.5 bg-menta-50 text-menta-700 text-xs font-semibold rounded-full">' +
+      hoyCitas.length +
+      "</span></div>" +
+      (hoyCitas.length
+        ? renderTable(
+            [
+              { label: "Hora", render: (c) => formatTime(c.hora) },
+              { label: "Cliente", render: (c) => c.clientenombre || "-" },
+              {
+                label: "Tratamiento",
+                render: (c) => c.tratamientonombre || "-",
+              },
+              {
+                label: "Estado",
+                render: (c) =>
+                  '<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full border ' +
+                  sc(c.estado) +
+                  '">' +
+                  cap(c.estado) +
+                  "</span>",
+              },
+            ],
+            hoyCitas,
+          )
+        : '<div class="p-12 flex flex-col items-center gap-2 text-[#9ca3af]"><i class="fa-solid fa-calendar-check text-3xl"></i><p class="text-sm font-medium">¡Sin citas hoy!</p><p class="text-xs">Un día libre para ti y tu equipo.</p></div>') +
+      '</div><div class="bg-white rounded-2xl border border-[#e8ecf1] shadow-sm p-5"><div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl bg-lavender-100 flex items-center justify-center"><i class="fa-solid fa-leaf text-menta"></i></div><h3 class="font-semibold text-[#2c3e50] text-sm">Ambiente del Día</h3></div><p class="text-sm text-[#6b7280] italic leading-relaxed">' +
+      frase +
+      '</p><p class="text-xs text-[#9ca3af] mt-2">Un espacio de calma y bienestar.</p><div class="flex gap-2 mt-4"><span class="w-2 h-2 rounded-full bg-menta"></span><span class="w-2 h-2 rounded-full bg-spa-300"></span><span class="w-2 h-2 rounded-full bg-blush"></span><span class="w-2 h-2 rounded-full bg-turquesa"></span></div></div></div></div>';
+  } catch (e) {
+    ct.innerHTML = showEmpty(
+      "fa-solid fa-circle-exclamation",
+      "Error",
+      "Ocurrió un error al cargar el resumen.",
+      "Reintentar",
+      "navigate('inicio')",
+    );
+  }
+};
 async function guardarVentaPaqueteCompleto() {
   try {
     const idcliente = $("vtaClienteId").value;
@@ -954,6 +1257,143 @@ async function _renderReporteScreen(ct) {
       "Reintentar",
       "navigate('reportes')",
     );
+  }
+}
+async function rptAutocomplete() {
+  const q = $("rptClienteInput")?.value;
+  if (!q || q.length < 2) {
+    $("rptClienteAC")?.classList.add("hidden");
+    return;
+  }
+  try {
+    const d = await api.get("/api/clientes?q=" + encodeURIComponent(q));
+    if (!d.success) return;
+    const ac = $("rptClienteAC");
+    if (!ac) return;
+    let html = '<div class="p-2 space-y-1">';
+    if (d.data.length) {
+      html += d.data
+        .map(
+          (c) =>
+            '<div class="px-3 py-2 hover:bg-menta-50 rounded-lg cursor-pointer text-sm text-[#2c3e50] flex items-center justify-between" onclick="rptSelCliente(' +
+            c.idcliente +
+            ",'" +
+            c.nombre.replace(/'/g, "\\'") +
+            "')\"><span>" +
+            c.nombre +
+            '</span><span class="text-xs text-[#6b7280]">' +
+            (c.telefono || "") +
+            "</span></div>",
+        )
+        .join("");
+    } else {
+      html +=
+        '<div class="px-3 py-2 text-sm text-[#9ca3af]">Sin resultados</div>';
+    }
+    html += "</div>";
+    ac.innerHTML = html;
+    ac.classList.remove("hidden");
+  } catch (e) {}
+}
+function rptSelCliente(id, nombre) {
+  const hi = $("rptClienteId");
+  const inp = $("rptClienteInput");
+  const ac = $("rptClienteAC");
+  if (hi) hi.value = id;
+  if (inp) inp.value = nombre;
+  if (ac) ac.classList.add("hidden");
+}
+async function rptEmpleadosPorCliente() {
+  const idcliente = $("rptClienteId")?.value;
+  if (!idcliente) return toast("Selecciona un cliente primero", false);
+  const res = $("rptClienteResultado");
+  if (!res) return;
+  res.innerHTML =
+    '<div class="flex justify-center py-3"><div class="w-5 h-5 border-2 border-[#e8ecf1] border-t-menta rounded-full spin"></div></div>';
+  try {
+    const d = await api.get("/api/reportes/empleados-por-cliente/" + idcliente);
+    if (!d.success) {
+      res.innerHTML =
+        '<p class="text-xs text-red-400 text-center py-2">' +
+        (d.error || "Error") +
+        "</p>";
+      return;
+    }
+    const emps = d.data || [];
+    res.innerHTML = emps.length
+      ? '<div class="mt-1"><p class="text-xs font-semibold text-[#6b7280] mb-1.5">Empleados que atendieron a este cliente:</p><div class="space-y-1">' +
+        emps
+          .map(
+            (e) =>
+              '<div class="flex items-center gap-2 px-3 py-2 bg-[#f8fafc] rounded-lg border border-[#e8ecf1]"><div class="w-6 h-6 rounded-full bg-menta-50 flex items-center justify-center"><i class="fa-solid fa-user-tie text-menta text-xs"></i></div><span class="text-xs font-medium text-[#2c3e50]">' +
+              (e.nombre || "-") +
+              '</span><span class="ml-auto text-xs text-[#6b7280]">' +
+              (e.totalcitas || e.citas || "") +
+              " cita(s)</span></div>",
+          )
+          .join("") +
+        "</div></div>"
+      : '<p class="text-xs text-[#9ca3af] text-center py-2">No hay empleados registrados para este cliente</p>';
+  } catch (e) {
+    res.innerHTML =
+      '<p class="text-xs text-red-400 text-center py-2">Error: ' +
+      (e.message || "") +
+      "</p>";
+  }
+}
+async function rptServiciosCliente() {
+  const idcliente = $("rptClienteId")?.value;
+  if (!idcliente) return toast("Selecciona un cliente primero", false);
+  const desde = $("rptFechaDesde")?.value;
+  const hasta = $("rptFechaHasta")?.value;
+  if (!desde || !hasta)
+    return toast("Selecciona las fechas de inicio y fin", false);
+  const res = $("rptClienteResultado");
+  if (!res) return;
+  res.innerHTML =
+    '<div class="flex justify-center py-3"><div class="w-5 h-5 border-2 border-[#e8ecf1] border-t-menta rounded-full spin"></div></div>';
+  try {
+    const d = await api.get(
+      "/api/reportes/servicios-cliente/" +
+        idcliente +
+        "?fechaInicio=" +
+        desde +
+        "&fechaFin=" +
+        hasta,
+    );
+    if (!d.success) {
+      res.innerHTML =
+        '<p class="text-xs text-red-400 text-center py-2">' +
+        (d.error || "Error") +
+        "</p>";
+      return;
+    }
+    const svcs = d.data || [];
+    res.innerHTML = svcs.length
+      ? '<div class="mt-1"><p class="text-xs font-semibold text-[#6b7280] mb-1.5">Servicios de ' +
+        formatDateShort(desde) +
+        " a " +
+        formatDateShort(hasta) +
+        ':</p><div class="space-y-1">' +
+        svcs
+          .map(
+            (s) =>
+              '<div class="flex items-center justify-between px-3 py-2 bg-[#f8fafc] rounded-lg border border-[#e8ecf1]"><div><p class="text-xs font-medium text-[#2c3e50]">' +
+              (s.nombre_servicio || "-") +
+              '</p><p class="text-xs text-[#6b7280]">' +
+              formatDateShort(s.fecha_servicio) +
+              '</p></div><span class="text-xs font-semibold text-menta">' +
+              (s.tipo_servicio || "") +
+              "</span></div>",
+          )
+          .join("") +
+        "</div></div>"
+      : '<p class="text-xs text-[#9ca3af] text-center py-2">Sin servicios en el intervalo seleccionado</p>';
+  } catch (e) {
+    res.innerHTML =
+      '<p class="text-xs text-red-400 text-center py-2">Error: ' +
+      (e.message || "") +
+      "</p>";
   }
 }
 SCREENS.reportes = async () => _renderReporteScreen($("pageContent"));

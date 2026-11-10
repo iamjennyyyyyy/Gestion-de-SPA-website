@@ -12,7 +12,7 @@ class CategoriaRepository {
 
   async buscarPorId(id) {
     const result = await pool.query(
-      `SELECT c.idcategoria, c.nombre as categorianombre, a.nombre AS areanombre
+      `SELECT c.idcategoria, c.nombre as categorianombre, c.idarea, a.nombre AS areanombre
             FROM categorias c
             INNER JOIN areas a ON c.idarea = a.idarea
             WHERE idcategoria = $1`,

@@ -181,3 +181,82 @@ function renderTable(cols, rows, emptyMsg) {
     "</tbody></table></div>"
   );
 }
+
+function openSubModal(html, cb) {
+  let sm = document.getElementById("subModalContainer");
+  if (!sm) {
+    sm = document.createElement("div");
+    sm.id = "subModalContainer";
+    sm.className = "fixed inset-0 z-[60] flex items-center justify-center p-4";
+    sm.style.cssText = "background:rgba(0,0,0,0.45);backdrop-filter:blur(2px)";
+    sm.addEventListener("click", function (e) {
+      if (e.target === sm) closeSubModal();
+    });
+    document.body.appendChild(sm);
+  }
+  sm.innerHTML =
+    '<div id="subModalBody" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto scale-in" onclick="event.stopPropagation()">' +
+    html +
+    "</div>";
+  sm.style.display = "flex";
+  if (cb) setTimeout(cb, 50);
+}
+function closeSubModal() {
+  const sm = document.getElementById("subModalContainer");
+  if (sm) sm.style.display = "none";
+}
+
+async function crearClienteRapido(origen) {
+  openSubModal(
+    '<div class="p-6" style="max-width:420px"><div class="flex items-center justify-between mb-5"><h3 class="text-lg font-semibold text-[#2c3e50]"><i class="fa-solid fa-user-plus text-menta mr-2"></i>Nuevo Cliente</h3><button onclick="closeSubModal()" class="text-[#9ca3af] hover:text-[#6b7280] text-xl"><i class="fa-solid fa-xmark"></i></button></div><div class="space-y-3.5"><div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Nombre *</label><input type="text" id="rapidClienteNombre" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div><div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">CI *</label><input type="text" id="rapidClienteCi" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div><div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Teléfono</label><input type="text" id="rapidClienteTelefono" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div><div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Email</label><input type="email" id="rapidClienteEmail" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div></div><div class="flex gap-2 mt-6"><button onclick="closeSubModal()" class="flex-1 px-4 py-2.5 bg-gray-100 text-[#6b7280] rounded-xl text-sm font-medium hover:bg-gray-200">Cancelar</button><button onclick="guardarClienteRapido(\'' +
+      origen +
+      '\')" class="flex-1 px-4 py-2.5 bg-menta text-white rounded-xl text-sm font-medium shadow-sm">Crear Cliente</button></div></div>',
+  );
+}
+async function guardarClienteRapido(origen) {
+  const nombre = $("rapidClienteNombre")?.value?.trim(),
+    ci = $("rapidClienteCi")?.value?.trim(),
+    telefono = $("rapidClienteTelefono")?.value?.trim(),
+    email = $("rapidClienteEmail")?.value?.trim();
+  if (!nombre) return toast("El nombre es requerido", false);
+  if (!ci) return toast("La CI es requerida", false);
+  try {
+    const d = await api.post("/api/clientes", {
+      nombre,
+      ci,
+      telefono: telefono || null,
+      email: email || null,
+    });
+    if (!d.success) {
+      toast(d.error || "Error al crear cliente", false);
+      return;
+    }
+    toast("Cliente creado");
+    closeSubModal();
+    if (origen === "cita") {
+      $("citaClienteId").value = d.data.idcliente;
+      $("citaClienteInput").value = d.data.nombre;
+      const ac = $("clienteAutocomplete");
+      if (ac) ac.classList.add("hidden");
+    } else if (origen === "vta") {
+      $("vtaClienteId").value = d.data.idcliente;
+      $("vtaClienteInput").value = d.data.nombre;
+      const ac = $("vtaClienteAutocomplete");
+      if (ac) ac.classList.add("hidden");
+    }
+  } catch (e) {
+    toast(e.message || "Error de conexión", false);
+  }
+}
+function debounce(fn, ms) {
+  let t;
+  return (...a) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...a), ms);
+  };
+}
+const HORAS=[];
+for(let h=9;h<=18;h++){HORAS.push(('0'+h).slice(-2)+':00');if(h<18)HORAS.push(('0'+h).slice(-2)+':30')}
+function horasOptions(sel){return HORAS.map(h=>'<option value="'+h+'"'+(sel===h?' selected':'')+'>'+h+'</option>').join('')}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}}

@@ -231,6 +231,30 @@ function eliminarCita(id) {
     false,
   );
 }
+
+function actualizarPrecioMostrado() {
+  const sel = document.getElementById("citaTratamiento");
+  if (!sel) {
+    console.log("No se encontró el select citaTratamiento");
+    return;
+  }
+
+  const selectedOption = sel.options[sel.selectedIndex];
+  if (!selectedOption) {
+    console.log("No hay opción seleccionada");
+    return;
+  }
+
+  const precio = selectedOption.getAttribute("data-precio");
+  console.log("Precio obtenido:", precio);
+
+  const precioSpan = document.getElementById("precioMostrado");
+  if (precioSpan && precio) {
+    precioSpan.textContent = $$(Number(precio));
+  } else if (precioSpan) {
+    precioSpan.textContent = "$0.00";
+  }
+}
 async function citaModal(editData) {
   editId = editData?.idcita || null;
   try {
@@ -366,52 +390,14 @@ async function citaModal(editData) {
     // Fecha
     body +=
       '<div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Fecha *</label>' +
-      '<input type="date" id="citaFecha" value="' +
-      (editData ? editData.fecha || "" : todayStr()) +
+      '<input type="date" id="citaFecha" value="' + (editData ? dayjs(editData.fecha).format('YYYY-MM-DD') : todayStr())  +
       '" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm"></div>';
 
     // Hora
     // Hora
-    body +=
-      '<div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Hora *</label>' +
-      '<select id="citaHora" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm">' +
-      '<option value="09:00"' +
-      (editData && editData.hora === "09:00" ? " selected" : "") +
-      ">09:00</option>" +
-      '<option value="09:30"' +
-      (editData && editData.hora === "09:30" ? " selected" : "") +
-      ">09:30</option>" +
-      '<option value="10:00"' +
-      (editData && editData.hora === "10:00" ? " selected" : "") +
-      ">10:00</option>" +
-      '<option value="10:30"' +
-      (editData && editData.hora === "10:30" ? " selected" : "") +
-      ">10:30</option>" +
-      '<option value="11:00"' +
-      (editData && editData.hora === "11:00" ? " selected" : "") +
-      ">11:00</option>" +
-      '<option value="11:30"' +
-      (editData && editData.hora === "11:30" ? " selected" : "") +
-      ">11:30</option>" +
-      '<option value="12:00"' +
-      (editData && editData.hora === "12:00" ? " selected" : "") +
-      ">12:00</option>" +
-      '<option value="12:30"' +
-      (editData && editData.hora === "12:30" ? " selected" : "") +
-      ">12:30</option>" +
-      '<option value="13:00"' +
-      (editData && editData.hora === "13:00" ? " selected" : "") +
-      ">13:00</option>" +
-      '<option value="13:30"' +
-      (editData && editData.hora === "13:30" ? " selected" : "") +
-      ">13:30</option>" +
-      '<option value="14:00"' +
-      (editData && editData.hora === "14:00" ? " selected" : "") +
-      ">14:00</option>" +
-      '<option value="14:30"' +
-      (editData && editData.hora === "14:30" ? " selected" : "") +
-      ">14:30</option>" +
-      "</select></div>";
+    body += '<div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Hora *</label>' +
+  '<select id="citaHora" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm">' +
+  horasOptions(editData ? formatTime(editData.hora) : '10:00') + '</select></div>';
     // Empleado
     body +=
       '<div><label class="block text-xs font-semibold text-[#6b7280] mb-1.5">Empleado *</label>' +
@@ -458,6 +444,8 @@ async function editarCita(id) {
     toast(e.message || "Error de conexión", false);
   }
 }
+
+
 async function autocompleteClientes() {
   const q = $("citaClienteInput")?.value;
   if (!q || q.length < 2) {
@@ -544,11 +532,4 @@ async function guardarCita() {
   } catch (e) {
     toast(e.message || "Error de conexión", false);
   }
-}
-function debounce(fn, ms) {
-  let t;
-  return (...a) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...a), ms);
-  };
 }

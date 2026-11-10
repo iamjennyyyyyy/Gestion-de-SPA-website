@@ -8,6 +8,16 @@ const _fieldMappings = {
   "/api/categorias": { categorianombre: "nombre" },
 };
 
+async function _loadSelect(fields,name,url,v,l){
+  try{const d=await api.get(url);if(d.success)return fields.map(f=>f.name===name?{...f,options:d.data.map(r=>({value:r[v],label:r[l]}))}:f)}catch(e){}
+  return fields;
+}
+const _fieldLoaders={
+  'admin-empleados':f=>_loadSelect(f,'iddistrito','/api/distritos','iddistrito','nombre'),
+  'admin-categorias':f=>_loadSelect(f,'idarea','/api/areas','idarea','nombre')
+};
+const _resolveFields=(page,fields)=>_fieldLoaders[page]?_fieldLoaders[page](fields):Promise.resolve(fields);
+
 function crudScreen(opts) {
   const {
     page,
@@ -76,36 +86,20 @@ function crudScreen(opts) {
       );
     }
   };
-  window["openModalCRUD_" + page] = () =>
-    crudForm(page, endpoint, entity, fields, null, onCreated);
+ window['openModalCRUD_'+page]=async()=>
+  crudForm(page,endpoint,entity,await _resolveFields(page,fields),null,onCreated);
 }
 
-window["editCRUD"] = async (p, id) => {
-  const cfg = _crudConfigs[p];
-  if (!cfg) return toast("Configuración no encontrada", false);
-  try {
-    const d = await api.get(cfg.endpoint + "/" + id);
-    if (!d.success) return toast(d.error || "Error", false);
-
-    // Aplicar mapeo de campos antes de pasar al formulario
-    let editData = d.data;
-    if (editData) {
-      const mappings = _fieldMappings[cfg.endpoint] || {};
-      Object.keys(mappings).forEach((apiField) => {
-        const formField = mappings[apiField];
-        if (
-          editData[apiField] !== undefined &&
-          editData[formField] === undefined
-        ) {
-          editData[formField] = editData[apiField];
-        }
-      });
-    }
-
-    crudForm(p, cfg.endpoint, cfg.entity, cfg.fields, editData, cfg.onCreated);
-  } catch (e) {
-    toast("Error al cargar datos", false);
-  }
+window.editCRUD=async(p,id)=>{
+  const cfg=_crudConfigs[p];if(!cfg)return toast('Configuración no encontrada',false);
+  try{
+    const d=await api.get(cfg.endpoint+'/'+id);
+    if(!d.success)return toast(d.error||'Error',false);
+    const editData=d.data;
+    const mappings=_fieldMappings[cfg.endpoint]||{};
+    Object.keys(mappings).forEach(a=>{const f=mappings[a];if(editData[a]!==undefined&&editData[f]===undefined)editData[f]=editData[a]});
+    crudForm(p,cfg.endpoint,cfg.entity,await _resolveFields(p,cfg.fields),editData,cfg.onCreated);
+  }catch(e){toast(e.message||'Error al cargar datos',false)}
 };
 
 async function crudForm(page, endpoint, entity, fields, editData, onCreated) {
@@ -179,7 +173,7 @@ async function crudForm(page, endpoint, entity, fields, editData, onCreated) {
         '" name="' +
         name +
         '" value="' +
-        val +
+        esc(val) +
         '" class="w-full px-4 py-2.5 border border-[#d1d5db] rounded-xl text-sm focus:ring-2 focus:ring-menta/30 focus:border-menta outline-none transition-all"' +
         (f.required ? " required" : "") +
         (f.placeholder ? ' placeholder="' + f.placeholder + '"' : "") +
