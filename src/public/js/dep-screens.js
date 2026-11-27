@@ -109,9 +109,7 @@ async function verPaqueteDetalle(id) {
 
     // Los tratamientos vienen como un string separado por comas desde la vista
     const tratamientosString = p.tratamientos || "";
-    const tratamientosList = tratamientosString
-      ? tratamientosString.split(", ")
-      : [];
+    const tratamientosList = tratamientosString ? tratamientosString.split(", ") : [];
 
     // Duración total
     const duracionTotal = p.duraciontotal

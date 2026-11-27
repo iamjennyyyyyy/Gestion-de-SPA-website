@@ -8,7 +8,7 @@ const pool = new Pool({
 });
 
 async function seed() {
-  console.log('🌱 Sembrando datos de prueba...\n');
+  console.log('Sembrando datos de prueba...\n');
 
   try {
     // 1. Limpiar datos existentes
